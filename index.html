@@ -128,6 +128,7 @@
             margin-top: 10px;
             opacity: 0;
             transition: opacity 0.3s;
+            font-weight: bold;
         }
         .botones-inferiores {
             display: flex;
@@ -155,12 +156,17 @@
         let materiaIdCounter = 0;
         let timeoutGuardado;
 
+        // Función para limpiar caracteres raros que rompan el HTML
+        function escapeHTML(str) {
+            return (str || '').replace(/"/g, '&quot;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+        }
+
         function crearMateriaHTML(id, nombre = '') {
             const card = document.createElement('div');
             card.className = 'materia-card';
             card.id = `materia-${id}`;
             card.innerHTML = `
-                <input type="text" class="materia-titulo" value="${nombre}" placeholder="Nombre de la materia (Ej. Embriología)" oninput="guardarDatos()">
+                <input type="text" class="materia-titulo" value="${escapeHTML(nombre)}" placeholder="Nombre de la materia (Ej. Embriología)" oninput="guardarDatos()">
                 
                 <table id="tabla-${id}">
                     <thead>
@@ -181,3 +187,205 @@
                     <button class="btn btn-add-eval" onclick="agregarEvaluacionEnBlanco(${id})">+ Agregar Evaluación</button>
                     <button class="btn btn-del" style="margin-top: 10px;" onclick="eliminarMateria(${id})">Eliminar Materia</button>
                 </div>
+                
+                <div class="resultado-container">
+                    <p>Total Acumulado: <span id="acum-${id}" style="color: #7e22ce;">0.00</span> / 20.00</p>
+                    <p id="mensaje-${id}" class="falta">BB TE FALTAN PUNTOS = 9.50</p>
+                </div>
+            `;
+            return card;
+        }
+
+        function agregarMateriaEnBlanco() {
+            materiaIdCounter++;
+            const container = document.getElementById('materias-container');
+            container.appendChild(crearMateriaHTML(materiaIdCounter, ''));
+            
+            agregarEvaluacionHTML(materiaIdCounter, 1, '', '', '');
+            agregarEvaluacionHTML(materiaIdCounter, 2, '', '', '');
+            agregarEvaluacionHTML(materiaIdCounter, 3, '', '', '');
+            
+            guardarDatos();
+        }
+
+        function eliminarMateria(idMateria) {
+            if(confirm('¿Seguro que quieres eliminar esta materia completa?')) {
+                const card = document.getElementById(`materia-${idMateria}`);
+                if (card) {
+                    card.remove();
+                    guardarDatos();
+                }
+            }
+        }
+
+        function agregarEvaluacionEnBlanco(idMateria) {
+            agregarEvaluacionHTML(idMateria, 1, '', '', '');
+            guardarDatos();
+        }
+
+        function agregarEvaluacionHTML(idMateria, corte, evaluacion, nota, peso) {
+            const tbody = document.getElementById(`body-${idMateria}`);
+            if (!tbody) return;
+            const tr = document.createElement('tr');
+            
+            tr.innerHTML = `
+                <td><input type="number" class="corte-input" min="1" max="5" value="${escapeHTML(String(corte))}" oninput="guardarDatos()"></td>
+                <td><input type="text" class="eval-input" value="${escapeHTML(String(evaluacion))}" placeholder="Ej. Parcial / Taller" oninput="guardarDatos()"></td>
+                <td><input type="number" class="nota-input" min="0" max="20" step="0.1" value="${escapeHTML(String(nota))}" oninput="calcularTodo(${idMateria}); guardarDatos()"></td>
+                <td><input type="number" class="peso-input" min="0" max="100" step="1" value="${escapeHTML(String(peso))}" oninput="calcularTodo(${idMateria}); guardarDatos()"></td>
+                <td class="puntaje-celda">0.00</td>
+                <td><button class="btn btn-del" onclick="eliminarFila(this, ${idMateria})">X</button></td>
+            `;
+            tbody.appendChild(tr);
+            calcularTodo(idMateria);
+        }
+
+        function eliminarFila(boton, idMateria) {
+            const fila = boton.closest('tr');
+            if (fila) {
+                fila.remove();
+                calcularTodo(idMateria);
+                guardarDatos();
+            }
+        }
+
+        function calcularTodo(idMateria) {
+            const tbody = document.getElementById(`body-${idMateria}`);
+            if (!tbody) return;
+            
+            const filas = tbody.querySelectorAll('tr');
+            let puntajeAcumulado = 0;
+
+            filas.forEach(fila => {
+                const notaInput = fila.querySelector('.nota-input').value;
+                const pesoInput = fila.querySelector('.peso-input').value;
+                
+                const nota = parseFloat(notaInput) || 0;
+                const peso = parseFloat(pesoInput) || 0;
+                const pesoDecimal = peso / 100;
+                
+                const puntajeFila = nota * pesoDecimal;
+                fila.querySelector('.puntaje-celda').innerText = puntajeFila.toFixed(2);
+                
+                puntajeAcumulado += puntajeFila;
+            });
+
+            const acumSpan = document.getElementById(`acum-${idMateria}`);
+            if(acumSpan) acumSpan.innerText = puntajeAcumulado.toFixed(2);
+            
+            const mensajeEl = document.getElementById(`mensaje-${idMateria}`);
+            if(mensajeEl) {
+                const puntosParaPasar = 9.5; 
+                const puntosFaltantes = puntosParaPasar - puntajeAcumulado;
+
+                if (puntosFaltantes > 0) {
+                    mensajeEl.className = 'falta';
+                    mensajeEl.innerHTML = `BB TE FALTAN PUNTOS = ${puntosFaltantes.toFixed(2)}`;
+                } else {
+                    mensajeEl.className = 'pasaste';
+                    mensajeEl.innerHTML = `¡YA PASASTE LA MATERIA! 💅✨ (Te pasas por ${Math.abs(puntosFaltantes).toFixed(2)} pts)`;
+                }
+            }
+        }
+
+        function mostrarAvisoGuardado() {
+            const status = document.getElementById('status-guardado');
+            if(status) {
+                status.style.opacity = '1';
+                clearTimeout(timeoutGuardado);
+                timeoutGuardado = setTimeout(() => { status.style.opacity = '0'; }, 2000);
+            }
+        }
+
+        function guardarDatos() {
+            try {
+                const materiasData = [];
+                document.querySelectorAll('.materia-card').forEach(card => {
+                    const idMateria = card.id.split('-')[1];
+                    const tituloEl = card.querySelector('.materia-titulo');
+                    const titulo = tituloEl ? tituloEl.value : '';
+                    const evaluaciones = [];
+                    
+                    card.querySelectorAll('tbody tr').forEach(tr => {
+                        evaluaciones.push({
+                            corte: tr.querySelector('.corte-input').value,
+                            evaluacion: tr.querySelector('.eval-input').value,
+                            nota: tr.querySelector('.nota-input').value,
+                            peso: tr.querySelector('.peso-input').value
+                        });
+                    });
+                    
+                    materiasData.push({ titulo, evaluaciones });
+                });
+                
+                localStorage.setItem('calculadoraRegiaDatos', JSON.stringify(materiasData));
+                mostrarAvisoGuardado();
+            } catch(e) {
+                console.error("Error al guardar:", e);
+            }
+        }
+
+        function borrarTodo() {
+            if(confirm("¿Estás segura de que quieres borrar TODAS las materias y notas? Esto no se puede deshacer, diva.")) {
+                localStorage.removeItem('calculadoraRegiaDatos');
+                document.getElementById('materias-container').innerHTML = '';
+                materiaIdCounter = 0;
+                agregarMateriaEnBlanco(); 
+            }
+        }
+
+        function cargarEjemplos(container) {
+            materiaIdCounter++;
+            container.appendChild(crearMateriaHTML(materiaIdCounter, 'Anatomía Patológica I'));
+            agregarEvaluacionHTML(materiaIdCounter, 1, 'Taller', 12, 5); 
+            agregarEvaluacionHTML(materiaIdCounter, 1, 'Caso Clínico', '', 10);
+            agregarEvaluacionHTML(materiaIdCounter, 1, 'Parcial', '', 15);
+
+            materiaIdCounter++;
+            container.appendChild(crearMateriaHTML(materiaIdCounter, 'Citoquímica'));
+            agregarEvaluacionHTML(materiaIdCounter, 1, 'Taller', '', 5);
+            agregarEvaluacionHTML(materiaIdCounter, 1, 'Parcial', '', 20);
+            
+            materiaIdCounter++;
+            container.appendChild(crearMateriaHTML(materiaIdCounter, 'Histología I'));
+            agregarEvaluacionHTML(materiaIdCounter, 1, 'Investigaciones', '', 10);
+            agregarEvaluacionHTML(materiaIdCounter, 1, 'Parcial', '', 20);
+            
+            guardarDatos();
+        }
+
+        function cargarDatos() {
+            const container = document.getElementById('materias-container');
+            if (!container) return;
+
+            try {
+                const datosGuardados = localStorage.getItem('calculadoraRegiaDatos');
+                
+                if (datosGuardados && datosGuardados !== "[]") {
+                    const materiasData = JSON.parse(datosGuardados);
+                    materiasData.forEach(materia => {
+                        materiaIdCounter++;
+                        container.appendChild(crearMateriaHTML(materiaIdCounter, materia.titulo || ''));
+                        
+                        if(materia.evaluaciones && Array.isArray(materia.evaluaciones)) {
+                            materia.evaluaciones.forEach(ev => {
+                                agregarEvaluacionHTML(materiaIdCounter, ev.corte || 1, ev.evaluacion || '', ev.nota || '', ev.peso || '');
+                            });
+                        }
+                    });
+                } else {
+                    cargarEjemplos(container);
+                }
+            } catch(e) {
+                // Si la memoria guardó algo corrupto, borramos y empezamos limpio
+                console.error("Memoria corrupta, reiniciando:", e);
+                localStorage.removeItem('calculadoraRegiaDatos');
+                cargarEjemplos(container);
+            }
+        }
+
+        // Ejecutar al iniciar la página
+        window.onload = cargarDatos;
+    </script>
+</body>
+</html>
