@@ -3,389 +3,377 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Calculadora de Notas ✨</title>
+    <title>Calculadora de Notas Universitarias</title>
     <style>
-        body { 
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; 
-            background: #f3e8ff; 
-            color: #333; 
-            margin: 0;
+        :root {
+            --lila-claro: #f3e8ff;
+            --lila-medio: #d8b4fe;
+            --lila-principal: #a855f7;
+            --lila-oscuro: #7e22ce;
+            --texto: #4c1d95;
+            --rojo-borrar: #ef4444;
+            --rojo-hover: #dc2626;
+            --blanco: #ffffff;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--lila-claro);
+            color: var(--texto);
+            max-width: 800px;
+            margin: 0 auto;
             padding: 20px;
+            line-height: 1.6;
         }
-        .container { 
-            max-width: 900px; 
-            margin: 0 auto; 
-            background: white; 
-            padding: 2rem; 
-            border-radius: 12px; 
-            box-shadow: 0 4px 15px rgba(107, 33, 168, 0.1); 
-        }
-        h1 { 
-            color: #9333ea; 
-            text-align: center; 
-            font-size: 2.5rem;
-            margin-bottom: 5px;
-        }
-        p.subtitle {
+
+        h1 {
             text-align: center;
-            color: #9ca3af;
-            font-style: italic;
+            color: var(--lila-oscuro);
             margin-bottom: 30px;
         }
-        .materia-card { 
-            border: 2px solid #e9d5ff; 
-            padding: 1.5rem; 
-            border-radius: 10px; 
-            margin-bottom: 1.5rem; 
-            background: #faf5ff; 
-        }
-        .materia-titulo {
-            font-size: 1.5rem; 
-            font-weight: bold; 
-            border: none; 
-            border-bottom: 2px dashed #a855f7; 
-            outline: none; 
-            width: 100%;
-            background: transparent;
-            color: #7e22ce;
-            margin-bottom: 15px;
-            padding-bottom: 5px;
-        }
-        .materia-titulo::placeholder {
-            color: #d8b4fe;
-        }
-        table { 
-            width: 100%; 
-            border-collapse: collapse; 
-            margin-bottom: 1rem; 
-        }
-        th {
-            background: #e9d5ff;
-            color: #6b21a8;
-            padding: 10px;
-            text-align: left;
-            border-radius: 4px;
-        }
-        td { 
-            padding: 8px; 
-            border-bottom: 1px solid #f3f4f6; 
-            vertical-align: middle;
-        }
-        input { 
-            width: 100%; 
-            padding: 8px; 
-            border: 1px solid #d8b4fe; 
-            border-radius: 6px; 
-            box-sizing: border-box; 
-            transition: all 0.2s;
-            color: #4c1d95;
-        }
-        input:focus {
-            border-color: #9333ea;
-            outline: none;
-            box-shadow: 0 0 0 2px #e9d5ff;
-        }
-        .btn { 
-            background: #a855f7; 
-            color: white; 
-            border: none; 
-            padding: 10px 15px; 
-            border-radius: 8px; 
-            cursor: pointer; 
-            font-weight: bold; 
-            font-size: 1rem;
-            transition: background 0.3s, transform 0.1s;
-        }
-        .btn:hover { background: #9333ea; }
-        .btn:active { transform: scale(0.98); }
-        .btn-add-eval { background: #c084fc; margin-top: 10px; font-size: 0.9rem; }
-        .btn-add-eval:hover { background: #a855f7; }
-        .btn-del { background: #ef4444; padding: 6px 12px; }
-        .btn-del:hover { background: #b91c1c; }
-        .btn-reset { background: #f43f5e; margin-top: 15px; }
-        .btn-reset:hover { background: #e11d48; }
-        
-        .resultado-container {
-            margin-top: 25px;
-            padding: 15px;
-            border-radius: 8px;
-            font-weight: bold;
-            font-size: 1.2rem;
-            text-align: right;
-            border: 1px solid #e9d5ff;
-            background: white;
-        }
-        .resultado-container p { margin: 5px 0; }
-        .falta { color: #e11d48; font-size: 1.5rem;}
-        .pasaste { color: #16a34a; font-size: 1.5rem;}
-        .puntaje-celda { font-weight: bold; color: #6b21a8; }
-        
-        #status-guardado {
-            text-align: center;
-            color: #10b981;
-            font-size: 0.9rem;
-            height: 20px;
-            margin-top: 10px;
-            opacity: 0;
-            transition: opacity 0.3s;
-            font-weight: bold;
-        }
-        .botones-inferiores {
+
+        /* Formulario para agregar materia */
+        .add-subject-container {
+            background-color: var(--blanco);
+            padding: 20px;
+            border-radius: 12px;
+            box-shadow: 0 4px 6px rgba(168, 85, 247, 0.1);
+            margin-bottom: 30px;
             display: flex;
-            flex-direction: column;
             gap: 10px;
         }
+
+        .add-subject-container input {
+            flex-grow: 1;
+            padding: 10px;
+            border: 2px solid var(--lila-medio);
+            border-radius: 8px;
+            font-size: 16px;
+            outline: none;
+            color: var(--texto);
+        }
+
+        .add-subject-container input:focus {
+            border-color: var(--lila-principal);
+        }
+
+        button {
+            cursor: pointer;
+            border: none;
+            border-radius: 8px;
+            font-weight: bold;
+            transition: background-color 0.2s;
+        }
+
+        .btn-primary {
+            background-color: var(--lila-principal);
+            color: var(--blanco);
+            padding: 10px 20px;
+            font-size: 16px;
+        }
+
+        .btn-primary:hover {
+            background-color: var(--lila-oscuro);
+        }
+
+        /* Tarjetas de Materias (Una debajo de la otra) */
+        .subjects-list {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .subject-card {
+            background-color: var(--blanco);
+            border-top: 5px solid var(--lila-principal);
+            border-radius: 12px;
+            padding: 20px;
+            box-shadow: 0 4px 6px rgba(168, 85, 247, 0.1);
+        }
+
+        .subject-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+            border-bottom: 2px solid var(--lila-claro);
+            padding-bottom: 10px;
+        }
+
+        .subject-header h2 {
+            margin: 0;
+            color: var(--lila-oscuro);
+        }
+
+        .btn-delete-sm {
+            background-color: var(--rojo-borrar);
+            color: var(--blanco);
+            padding: 5px 10px;
+            font-size: 12px;
+            border-radius: 5px;
+        }
+
+        .btn-delete-sm:hover { background-color: var(--rojo-hover); }
+
+        /* Evaluaciones */
+        .eval-row {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 10px;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+
+        .eval-row input {
+            padding: 8px;
+            border: 1px solid var(--lila-medio);
+            border-radius: 6px;
+            outline: none;
+        }
+
+        .eval-name { flex-grow: 1; min-width: 150px; }
+        .eval-grade, .eval-weight { width: 80px; text-align: center; }
+
+        .btn-add-eval {
+            background-color: var(--lila-medio);
+            color: var(--lila-oscuro);
+            padding: 8px 15px;
+            margin-top: 10px;
+            font-size: 14px;
+        }
+        .btn-add-eval:hover { background-color: #c084fc; color: white; }
+
+        .btn-remove-eval {
+            background-color: transparent;
+            color: var(--rojo-borrar);
+            font-size: 18px;
+            padding: 0 5px;
+        }
+
+        /* Resumen de la materia */
+        .subject-summary {
+            margin-top: 20px;
+            padding-top: 15px;
+            border-top: 2px dashed var(--lila-medio);
+            background-color: #faf5ff;
+            padding: 15px;
+            border-radius: 8px;
+        }
+
+        .summary-text {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 5px;
+            font-weight: 500;
+        }
+
+        .status-message {
+            text-align: center;
+            font-weight: bold;
+            font-size: 1.1em;
+            margin-top: 10px;
+            padding: 10px;
+            border-radius: 6px;
+        }
+
+        .status-pass { background-color: #dcfce7; color: #166534; }
+        .status-need { background-color: #fee2e2; color: #991b1b; }
+
+        /* Botón de reset al final */
+        .reset-container {
+            margin-top: 60px;
+            padding-top: 30px;
+            border-top: 1px solid var(--lila-medio);
+            text-align: center;
+        }
+
+        .btn-reset-all {
+            background-color: var(--rojo-borrar);
+            color: var(--blanco);
+            padding: 15px 30px;
+            font-size: 16px;
+            border-radius: 8px;
+            opacity: 0.9;
+        }
+        .btn-reset-all:hover { opacity: 1; }
+
     </style>
 </head>
 <body>
-    <div class="container">
-        <h1>Calculadora Regia y Poderosa ✨</h1>
-        <p class="subtitle">HERMOSA, BELLA, PODEROSA, REGIA, AGROPECUARIA, ORGANICA, DELGADA, CHAVA, FINA, DIVA</p>
-        
-        <div id="materias-container"></div>
-        
-        <div class="botones-inferiores">
-            <button class="btn" style="width: 100%; font-size: 1.2rem;" onclick="agregarMateriaEnBlanco()">+ Agregar Otra Materia</button>
-            <button class="btn btn-reset" style="width: 100%; font-size: 1rem;" onclick="borrarTodo()">🗑️ Borrar Todo y Empezar de Cero</button>
+
+    <h1>✨ Mi Calculadora de Notas</h1>
+
+    <div class="add-subject-container">
+        <input type="text" id="newSubjectName" placeholder="Escribe el nombre de la materia (Ej. Anatomía)..." onkeypress="handleKeyPress(event)">
+        <button class="btn-primary" onclick="addSubject()">Agregar Materia</button>
+    </div>
+
+    <div id="subjectsContainer" class="subjects-list">
         </div>
-        
-        <p id="status-guardado">✅ Cambios guardados automáticamente</p>
+
+    <div class="reset-container">
+        <p style="font-size: 12px; color: var(--lila-principal);">Peligro: Esto borrará todas las materias y notas.</p>
+        <button class="btn-reset-all" onclick="resetAll()">🗑️ Borrar todo y empezar trimestre de cero</button>
     </div>
 
     <script>
-        let materiaIdCounter = 0;
-        let timeoutGuardado;
+        // La meta para pasar según el sistema venezolano universitario suele ser 9.5
+        const GOAL_POINTS = 9.5;
 
-        // Función para limpiar caracteres raros que rompan el HTML
-        function escapeHTML(str) {
-            return (str || '').replace(/"/g, '&quot;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+        // Cargar datos de LocalStorage o inicializar vacío
+        let subjects = JSON.parse(localStorage.getItem('userSubjects')) || [];
+
+        function saveToLocalStorage() {
+            localStorage.setItem('userSubjects', JSON.stringify(subjects));
         }
 
-        function crearMateriaHTML(id, nombre = '') {
-            const card = document.createElement('div');
-            card.className = 'materia-card';
-            card.id = `materia-${id}`;
-            card.innerHTML = `
-                <input type="text" class="materia-titulo" value="${escapeHTML(nombre)}" placeholder="Nombre de la materia (Ej. Embriología)" oninput="guardarDatos()">
-                
-                <table id="tabla-${id}">
-                    <thead>
-                        <tr>
-                            <th width="10%">Corte</th>
-                            <th width="35%">Evaluación</th>
-                            <th width="15%">Nota (0-20)</th>
-                            <th width="15%">Peso (%)</th>
-                            <th width="15%">Puntos</th>
-                            <th width="10%">Acción</th>
-                        </tr>
-                    </thead>
-                    <tbody id="body-${id}">
-                    </tbody>
-                </table>
-                
-                <div style="display: flex; justify-content: space-between; align-items: center;">
-                    <button class="btn btn-add-eval" onclick="agregarEvaluacionEnBlanco(${id})">+ Agregar Evaluación</button>
-                    <button class="btn btn-del" style="margin-top: 10px;" onclick="eliminarMateria(${id})">Eliminar Materia</button>
-                </div>
-                
-                <div class="resultado-container">
-                    <p>Total Acumulado: <span id="acum-${id}" style="color: #7e22ce;">0.00</span> / 20.00</p>
-                    <p id="mensaje-${id}" class="falta">BB TE FALTAN PUNTOS = 9.50</p>
-                </div>
-            `;
-            return card;
+        function handleKeyPress(e) {
+            if (e.key === 'Enter') addSubject();
         }
 
-        function agregarMateriaEnBlanco() {
-            materiaIdCounter++;
-            const container = document.getElementById('materias-container');
-            container.appendChild(crearMateriaHTML(materiaIdCounter, ''));
+        function generateId() {
+            return Date.now().toString(36) + Math.random().toString(36).substr(2);
+        }
+
+        function addSubject() {
+            const input = document.getElementById('newSubjectName');
+            const name = input.value.trim();
             
-            agregarEvaluacionHTML(materiaIdCounter, 1, '', '', '');
-            agregarEvaluacionHTML(materiaIdCounter, 2, '', '', '');
-            agregarEvaluacionHTML(materiaIdCounter, 3, '', '', '');
-            
-            guardarDatos();
-        }
+            if (name === "") return alert("Por favor ingresa un nombre para la materia");
 
-        function eliminarMateria(idMateria) {
-            if(confirm('¿Seguro que quieres eliminar esta materia completa?')) {
-                const card = document.getElementById(`materia-${idMateria}`);
-                if (card) {
-                    card.remove();
-                    guardarDatos();
-                }
-            }
-        }
-
-        function agregarEvaluacionEnBlanco(idMateria) {
-            agregarEvaluacionHTML(idMateria, 1, '', '', '');
-            guardarDatos();
-        }
-
-        function agregarEvaluacionHTML(idMateria, corte, evaluacion, nota, peso) {
-            const tbody = document.getElementById(`body-${idMateria}`);
-            if (!tbody) return;
-            const tr = document.createElement('tr');
-            
-            tr.innerHTML = `
-                <td><input type="number" class="corte-input" min="1" max="5" value="${escapeHTML(String(corte))}" oninput="guardarDatos()"></td>
-                <td><input type="text" class="eval-input" value="${escapeHTML(String(evaluacion))}" placeholder="Ej. Parcial / Taller" oninput="guardarDatos()"></td>
-                <td><input type="number" class="nota-input" min="0" max="20" step="0.1" value="${escapeHTML(String(nota))}" oninput="calcularTodo(${idMateria}); guardarDatos()"></td>
-                <td><input type="number" class="peso-input" min="0" max="100" step="1" value="${escapeHTML(String(peso))}" oninput="calcularTodo(${idMateria}); guardarDatos()"></td>
-                <td class="puntaje-celda">0.00</td>
-                <td><button class="btn btn-del" onclick="eliminarFila(this, ${idMateria})">X</button></td>
-            `;
-            tbody.appendChild(tr);
-            calcularTodo(idMateria);
-        }
-
-        function eliminarFila(boton, idMateria) {
-            const fila = boton.closest('tr');
-            if (fila) {
-                fila.remove();
-                calcularTodo(idMateria);
-                guardarDatos();
-            }
-        }
-
-        function calcularTodo(idMateria) {
-            const tbody = document.getElementById(`body-${idMateria}`);
-            if (!tbody) return;
-            
-            const filas = tbody.querySelectorAll('tr');
-            let puntajeAcumulado = 0;
-
-            filas.forEach(fila => {
-                const notaInput = fila.querySelector('.nota-input').value;
-                const pesoInput = fila.querySelector('.peso-input').value;
-                
-                const nota = parseFloat(notaInput) || 0;
-                const peso = parseFloat(pesoInput) || 0;
-                const pesoDecimal = peso / 100;
-                
-                const puntajeFila = nota * pesoDecimal;
-                fila.querySelector('.puntaje-celda').innerText = puntajeFila.toFixed(2);
-                
-                puntajeAcumulado += puntajeFila;
+            subjects.push({
+                id: generateId(),
+                name: name,
+                evaluations: [
+                    // Empezamos con una evaluación vacía por defecto
+                    { id: generateId(), name: 'Parcial 1', grade: 0, weight: 20 }
+                ]
             });
 
-            const acumSpan = document.getElementById(`acum-${idMateria}`);
-            if(acumSpan) acumSpan.innerText = puntajeAcumulado.toFixed(2);
-            
-            const mensajeEl = document.getElementById(`mensaje-${idMateria}`);
-            if(mensajeEl) {
-                const puntosParaPasar = 9.5; 
-                const puntosFaltantes = puntosParaPasar - puntajeAcumulado;
+            input.value = "";
+            saveToLocalStorage();
+            render();
+        }
 
-                if (puntosFaltantes > 0) {
-                    mensajeEl.className = 'falta';
-                    mensajeEl.innerHTML = `BB TE FALTAN PUNTOS = ${puntosFaltantes.toFixed(2)}`;
+        function deleteSubject(subjectId) {
+            if (confirm("¿Segura que quieres eliminar esta materia por completo?")) {
+                subjects = subjects.filter(s => s.id !== subjectId);
+                saveToLocalStorage();
+                render();
+            }
+        }
+
+        function addEvaluation(subjectId) {
+            const subject = subjects.find(s => s.id === subjectId);
+            subject.evaluations.push({ id: generateId(), name: 'Nueva Evaluación', grade: 0, weight: 0 });
+            saveToLocalStorage();
+            render();
+        }
+
+        function deleteEvaluation(subjectId, evalId) {
+            const subject = subjects.find(s => s.id === subjectId);
+            subject.evaluations = subject.evaluations.filter(e => e.id !== evalId);
+            saveToLocalStorage();
+            render();
+        }
+
+        function updateEval(subjectId, evalId, field, value) {
+            const subject = subjects.find(s => s.id === subjectId);
+            const evaluation = subject.evaluations.find(e => e.id === evalId);
+            
+            if (field === 'name') {
+                evaluation[field] = value;
+            } else {
+                // Convertir a número para cálculos (evitar errores si dejan en blanco)
+                let num = parseFloat(value);
+                if (isNaN(num)) num = 0;
+                evaluation[field] = num;
+            }
+            
+            saveToLocalStorage();
+            render();
+        }
+
+        function resetAll() {
+            if (confirm("¡ATENCIÓN! ¿Estás segura de que quieres borrar TODAS las materias y empezar el trimestre desde cero? Esto no se puede deshacer.")) {
+                subjects = [];
+                saveToLocalStorage();
+                render();
+            }
+        }
+
+        function render() {
+            const container = document.getElementById('subjectsContainer');
+            container.innerHTML = '';
+
+            subjects.forEach(subject => {
+                let totalWeight = 0;
+                let totalPoints = 0;
+
+                let evalsHTML = subject.evaluations.map(ev => {
+                    totalWeight += ev.weight;
+                    // Formula: (Nota * Peso%) / 100
+                    let points = (ev.grade * ev.weight) / 100;
+                    totalPoints += points;
+
+                    return `
+                        <div class="eval-row">
+                            <input type="text" class="eval-name" value="${ev.name}" placeholder="Nombre (Ej. Taller)" onchange="updateEval('${subject.id}', '${ev.id}', 'name', this.value)">
+                            <input type="number" class="eval-grade" value="${ev.grade || ''}" placeholder="Nota (0-20)" min="0" max="20" step="0.1" onchange="updateEval('${subject.id}', '${ev.id}', 'grade', this.value)">
+                            <input type="number" class="eval-weight" value="${ev.weight || ''}" placeholder="% Peso" min="0" max="100" onchange="updateEval('${subject.id}', '${ev.id}', 'weight', this.value)">
+                            <span>%</span>
+                            <button class="btn-remove-eval" onclick="deleteEvaluation('${subject.id}', '${ev.id}')" title="Borrar evaluación">✖</button>
+                        </div>
+                    `;
+                }).join('');
+
+                let pointsNeeded = GOAL_POINTS - totalPoints;
+                let statusHTML = '';
+
+                if (pointsNeeded <= 0) {
+                    statusHTML = `<div class="status-message status-pass">¡Felicidades! Ya pasaste la materia con ${totalPoints.toFixed(2)} pts 🎉</div>`;
                 } else {
-                    mensajeEl.className = 'pasaste';
-                    mensajeEl.innerHTML = `¡YA PASASTE LA MATERIA! 💅✨ (Te pasas por ${Math.abs(puntosFaltantes).toFixed(2)} pts)`;
+                    statusHTML = `<div class="status-message status-need">Te faltan <b>${pointsNeeded.toFixed(2)}</b> puntos para llegar a ${GOAL_POINTS} 📚</div>`;
                 }
-            }
-        }
 
-        function mostrarAvisoGuardado() {
-            const status = document.getElementById('status-guardado');
-            if(status) {
-                status.style.opacity = '1';
-                clearTimeout(timeoutGuardado);
-                timeoutGuardado = setTimeout(() => { status.style.opacity = '0'; }, 2000);
-            }
-        }
-
-        function guardarDatos() {
-            try {
-                const materiasData = [];
-                document.querySelectorAll('.materia-card').forEach(card => {
-                    const idMateria = card.id.split('-')[1];
-                    const tituloEl = card.querySelector('.materia-titulo');
-                    const titulo = tituloEl ? tituloEl.value : '';
-                    const evaluaciones = [];
-                    
-                    card.querySelectorAll('tbody tr').forEach(tr => {
-                        evaluaciones.push({
-                            corte: tr.querySelector('.corte-input').value,
-                            evaluacion: tr.querySelector('.eval-input').value,
-                            nota: tr.querySelector('.nota-input').value,
-                            peso: tr.querySelector('.peso-input').value
-                        });
-                    });
-                    
-                    materiasData.push({ titulo, evaluaciones });
-                });
-                
-                localStorage.setItem('calculadoraRegiaDatos', JSON.stringify(materiasData));
-                mostrarAvisoGuardado();
-            } catch(e) {
-                console.error("Error al guardar:", e);
-            }
-        }
-
-        function borrarTodo() {
-            if(confirm("¿Estás segura de que quieres borrar TODAS las materias y notas? Esto no se puede deshacer, diva.")) {
-                localStorage.removeItem('calculadoraRegiaDatos');
-                document.getElementById('materias-container').innerHTML = '';
-                materiaIdCounter = 0;
-                agregarMateriaEnBlanco(); 
-            }
-        }
-
-        function cargarEjemplos(container) {
-            materiaIdCounter++;
-            container.appendChild(crearMateriaHTML(materiaIdCounter, 'Anatomía Patológica I'));
-            agregarEvaluacionHTML(materiaIdCounter, 1, 'Taller', 12, 5); 
-            agregarEvaluacionHTML(materiaIdCounter, 1, 'Caso Clínico', '', 10);
-            agregarEvaluacionHTML(materiaIdCounter, 1, 'Parcial', '', 15);
-
-            materiaIdCounter++;
-            container.appendChild(crearMateriaHTML(materiaIdCounter, 'Citoquímica'));
-            agregarEvaluacionHTML(materiaIdCounter, 1, 'Taller', '', 5);
-            agregarEvaluacionHTML(materiaIdCounter, 1, 'Parcial', '', 20);
-            
-            materiaIdCounter++;
-            container.appendChild(crearMateriaHTML(materiaIdCounter, 'Histología I'));
-            agregarEvaluacionHTML(materiaIdCounter, 1, 'Investigaciones', '', 10);
-            agregarEvaluacionHTML(materiaIdCounter, 1, 'Parcial', '', 20);
-            
-            guardarDatos();
-        }
-
-        function cargarDatos() {
-            const container = document.getElementById('materias-container');
-            if (!container) return;
-
-            try {
-                const datosGuardados = localStorage.getItem('calculadoraRegiaDatos');
-                
-                if (datosGuardados && datosGuardados !== "[]") {
-                    const materiasData = JSON.parse(datosGuardados);
-                    materiasData.forEach(materia => {
-                        materiaIdCounter++;
-                        container.appendChild(crearMateriaHTML(materiaIdCounter, materia.titulo || ''));
+                const cardHTML = `
+                    <div class="subject-card">
+                        <div class="subject-header">
+                            <h2>${subject.name}</h2>
+                            <button class="btn-delete-sm" onclick="deleteSubject('${subject.id}')">Eliminar Materia</button>
+                        </div>
                         
-                        if(materia.evaluaciones && Array.isArray(materia.evaluaciones)) {
-                            materia.evaluaciones.forEach(ev => {
-                                agregarEvaluacionHTML(materiaIdCounter, ev.corte || 1, ev.evaluacion || '', ev.nota || '', ev.peso || '');
-                            });
-                        }
-                    });
-                } else {
-                    cargarEjemplos(container);
-                }
-            } catch(e) {
-                // Si la memoria guardó algo corrupto, borramos y empezamos limpio
-                console.error("Memoria corrupta, reiniciando:", e);
-                localStorage.removeItem('calculadoraRegiaDatos');
-                cargarEjemplos(container);
-            }
+                        <div class="evaluations-container">
+                            <div class="eval-row" style="font-weight: bold; margin-bottom: 5px;">
+                                <div class="eval-name" style="border: none;">Evaluación</div>
+                                <div class="eval-grade" style="border: none;">Nota (20)</div>
+                                <div class="eval-weight" style="border: none; margin-right:20px;">Peso %</div>
+                            </div>
+                            ${evalsHTML}
+                        </div>
+                        
+                        <button class="btn btn-add-eval" onclick="addEvaluation('${subject.id}')">+ Agregar evaluación</button>
+
+                        <div class="subject-summary">
+                            <div class="summary-text">
+                                <span>Porcentaje evaluado:</span>
+                                <span style="color: ${totalWeight > 100 ? 'red' : 'inherit'}">${totalWeight.toFixed(0)}% / 100%</span>
+                            </div>
+                            <div class="summary-text">
+                                <span>Puntos acumulados:</span>
+                                <span>${totalPoints.toFixed(2)} / 20 pts</span>
+                            </div>
+                            ${statusHTML}
+                        </div>
+                    </div>
+                `;
+                
+                container.innerHTML += cardHTML;
+            });
         }
 
-        // Ejecutar al iniciar la página
-        window.onload = cargarDatos;
+        // Renderizar por primera vez al abrir la página
+        render();
     </script>
 </body>
 </html>
