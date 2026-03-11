@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Calculadora de Notas ✨</title>
+    <style>
+        body { 
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; 
+            background: #f3e8ff; 
+            color: #333; 
+            margin: 0;
+            padding: 20px;
+        }
+        .container { 
+            max-width: 900px; 
+            margin: 0 auto; 
+            background: white; 
+            padding: 2rem; 
+            border-radius: 12px; 
+            box-shadow: 0 4px 15px rgba(107, 33, 168, 0.1); 
+        }
+        h1 { 
+            color: #9333ea; 
+            text-align: center; 
+            font-size: 2.5rem;
+            margin-bottom: 5px;
+        }
+        p.subtitle {
+            text-align: center;
+            color: #9ca3af;
+            font-style: italic;
+            margin-bottom: 30px;
+        }
+        .materia-card { 
+            border: 2px solid #e9d5ff; 
+            padding: 1.5rem; 
+            border-radius: 10px; 
+            margin-bottom: 1.5rem; 
+            background: #faf5ff; 
+        }
+        .materia-titulo {
+            font-size: 1.5rem; 
+            font-weight: bold; 
+            border: none; 
+            border-bottom: 2px dashed #a855f7; 
+            outline: none; 
+            width: 100%;
+            background: transparent;
+            color: #7e22ce;
+            margin-bottom: 15px;
+            padding-bottom: 5px;
+        }
+        .materia-titulo::placeholder {
+            color: #d8b4fe;
+        }
+        table { 
+            width: 100%; 
+            border-collapse: collapse; 
+            margin-bottom: 1rem; 
+        }
+        th {
+            background: #e9d5ff;
+            color: #6b21a8;
+            padding: 10px;
+            text-align: left;
+            border-radius: 4px;
+        }
+        td { 
+            padding: 8px; 
+            border-bottom: 1px solid #f3f4f6; 
+            vertical-align: middle;
+        }
+        input { 
+            width: 100%; 
+            padding: 8px; 
+            border: 1px solid #d8b4fe; 
+            border-radius: 6px; 
+            box-sizing: border-box; 
+            transition: all 0.2s;
+            color: #4c1d95;
+        }
+        input:focus {
+            border-color: #9333ea;
+            outline: none;
+            box-shadow: 0 0 0 2px #e9d5ff;
+        }
+        .btn { 
+            background: #a855f7; 
+            color: white; 
+            border: none; 
+            padding: 10px 15px; 
+            border-radius: 8px; 
+            cursor: pointer; 
+            font-weight: bold; 
+            font-size: 1rem;
+            transition: background 0.3s, transform 0.1s;
+        }
+        .btn:hover { background: #9333ea; }
+        .btn:active { transform: scale(0.98); }
+        .btn-add-eval { background: #c084fc; margin-top: 10px; font-size: 0.9rem; }
+        .btn-add-eval:hover { background: #a855f7; }
+        .btn-del { background: #ef4444; padding: 6px 12px; }
+        .btn-del:hover { background: #b91c1c; }
+        .btn-reset { background: #f43f5e; margin-top: 15px; }
+        .btn-reset:hover { background: #e11d48; }
+        
+        .resultado-container {
+            margin-top: 25px;
+            padding: 15px;
+            border-radius: 8px;
+            font-weight: bold;
+            font-size: 1.2rem;
+            text-align: right;
+            border: 1px solid #e9d5ff;
+            background: white;
+        }
+        .resultado-container p { margin: 5px 0; }
+        .falta { color: #e11d48; font-size: 1.5rem;}
+        .pasaste { color: #16a34a; font-size: 1.5rem;}
+        .puntaje-celda { font-weight: bold; color: #6b21a8; }
+        
+        #status-guardado {
+            text-align: center;
+            color: #10b981;
+            font-size: 0.9rem;
+            height: 20px;
+            margin-top: 10px;
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+        .botones-inferiores {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Calculadora Regia y Poderosa ✨</h1>
+        <p class="subtitle">HERMOSA, BELLA, PODEROSA, REGIA, AGROPECUARIA, ORGANICA, DELGADA, CHAVA, FINA, DIVA</p>
+        
+        <div id="materias-container"></div>
+        
+        <div class="botones-inferiores">
+            <button class="btn" style="width: 100%; font-size: 1.2rem;" onclick="agregarMateriaEnBlanco()">+ Agregar Otra Materia</button>
+            <button class="btn btn-reset" style="width: 100%; font-size: 1rem;" onclick="borrarTodo()">🗑️ Borrar Todo y Empezar de Cero</button>
+        </div>
+        
+        <p id="status-guardado">✅ Cambios guardados automáticamente</p>
+    </div>
+
+    <script>
+        let materiaIdCounter = 0;
+        let timeoutGuardado;
+
+        function crearMateriaHTML(id, nombre = '') {
+            const card = document.createElement('div');
+            card.className = 'materia-card';
+            card.id = `materia-${id}`;
+            card.innerHTML = `
+                <input type="text" class="materia-titulo" value="${nombre}" placeholder="Nombre de la materia (Ej. Embriología)" oninput="guardarDatos()">
+                
+                <table id="tabla-${id}">
+                    <thead>
+                        <tr>
+                            <th width="10%">Corte</th>
+                            <th width="35%">Evaluación</th>
+                            <th width="15%">Nota (0-20)</th>
+                            <th width="15%">Peso (%)</th>
+                            <th width="15%">Puntos</th>
+                            <th width="10%">Acción</th>
+                        </tr>
+                    </thead>
+                    <tbody id="body-${id}">
+                    </tbody>
+                </table>
+                
+                <div style="display: flex; justify-content: space-between; align-items: center;">
+                    <button class="btn btn-add-eval" onclick="agregarEvaluacionEnBlanco(${id})">+ Agregar Evaluación</button>
+                    <button class="btn btn-del" style="margin-top: 10px;" onclick="eliminarMateria(${id})">Eliminar Materia</button>
+                </div>
